@@ -5,10 +5,10 @@ const RootComponent = defineComponent({
   name: 'RootComponent',
 
   data() {
-      return {
-          counter: 0,
-      }
-  }
+    return {
+      counter: 0,
+    };
+  },
 });
 
 const app = createApp(RootComponent);
