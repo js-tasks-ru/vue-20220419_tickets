@@ -30,6 +30,7 @@ export default defineComponent({
   watch: {
     meetupId() {
       this.error = false;
+      this.meetup = null;
       this.getMeetup(this.meetupId);
     },
   },
