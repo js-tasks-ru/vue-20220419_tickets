@@ -20,7 +20,6 @@ const RootComponent = defineComponent({
 
   data() {
     return {
-      n: 1,
       meetupId: null,
       meetup: null,
     };
