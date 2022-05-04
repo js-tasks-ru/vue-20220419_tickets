@@ -29,9 +29,6 @@ export default defineComponent({
   },
 
   template: `
-  <!-- {{agendaItem}} -->
-  <!-- {{$options.agendaItemIcons[agendaItem.type]}} -->
-  <!-- {{agendaItemIcons[agendaItem.type]}} -->
     <div class="agenda-item">
       <div class="agenda-item__col">
         <img :src="getIcon" class="icon" alt="key" />
@@ -40,9 +37,9 @@ export default defineComponent({
       <div class="agenda-item__col">
         <h3 class="agenda-item__title">{{getTitle}}</h3>
         <p v-if = "agendaItem.type === 'talk'" class="agenda-item__talk">
-          <span>Talk Speaker</span>
+          <span>{{agendaItem.speaker}}</span>
           <span class="agenda-item__dot"></span>
-          <span class="agenda-item__lang">EN</span>
+          <span class="agenda-item__lang">{{agendaItem.language}}</span>
         </p>
         <p v-if="agendaItem.description">{{agendaItem.description}}</p>
       </div>
