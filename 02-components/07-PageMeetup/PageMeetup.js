@@ -45,7 +45,7 @@ export default defineComponent({
           this.meetup = meetup;
         })
         .catch((err) => {
-          this.error = err;
+          this.error = err.message;
         });
     },
   },
@@ -61,7 +61,7 @@ export default defineComponent({
         </ui-container>
       </template>
       <ui-container v-else>
-        <ui-alert>error</ui-alert>
+        <ui-alert>{{error}}</ui-alert>
       </ui-container>
     </div>`,
 });
