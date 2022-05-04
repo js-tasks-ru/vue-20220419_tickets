@@ -10,12 +10,12 @@ export default defineComponent({
       default: 0,
     },
   },
-  emits: ['update'],
+  emits: ['update:count'],
 
   // Шаблон лучше держать максимально простым, а логику выносить в методы
   methods: {
     update() {
-      this.$emit('update', this.count + 1);
+      this.$emit('update:count', this.count + 1);
     },
   },
 
