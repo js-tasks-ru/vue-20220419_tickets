@@ -36,7 +36,7 @@ export default {
 
   methods: {
     success(data, delay = this.delay) {
-      this.toasts.unshift({
+      this.toasts.push({
         type: 'toast_success',
         text: data,
         expire: this.getExpiredDate(delay),
@@ -44,7 +44,7 @@ export default {
     },
 
     error(data, delay = this.delay) {
-      this.toasts.unshift({ type: 'toast_error', text: data, expire: this.getExpiredDate(delay) });
+      this.toasts.push({ type: 'toast_error', text: data, expire: this.getExpiredDate(delay) });
     },
 
     getExpiredDate(delay) {
@@ -55,7 +55,7 @@ export default {
     },
 
     clearToasts() {
-      let forRemove = this.toasts.filter((e) => e.expire <= new Date());
+      let forRemove = this.toasts.filter((e) => e.expire < new Date());
       forRemove.forEach((f) =>
         this.toasts.splice(
           this.toasts.findIndex((e) => e.expire === f.expire),

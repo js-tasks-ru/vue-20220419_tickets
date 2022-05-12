@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown" :class="{ dropdown_opened: opened }">
-    <button type="button" class="dropdown__toggle dropdown__toggle_icon" @click="opened = !opened">
-      <ui-icon icon="tv" class="dropdown__icon" />
+    <button type="button" class="dropdown__toggle" @click="opened = !opened" :class="{dropdown__toggle_icon: optionsHasIcons}">
+      <ui-icon v-if="dropdownIcon" :icon="dropdownIcon" class="dropdown__icon" />
       <span>{{ dropdownTitle }}</span>
     </button>
 
@@ -9,7 +9,8 @@
       <button
         v-for="option in options"
         :key="option.value"
-        class="dropdown__item dropdown__item_icon"
+        class="dropdown__item"
+        :class="{dropdown__item_icon: optionsHasIcons}"
         role="option"
         type="button"
         @click="setActiveOption(option)"
@@ -56,6 +57,12 @@ export default {
   computed: {
     dropdownTitle() {
       return this.modelValue ? this.options.find((e) => e.value === this.modelValue).text : this.title;
+    },
+    dropdownIcon() {
+      return this.modelValue ? this.options.find((e) => e.value === this.modelValue).icon : false;
+    },
+    optionsHasIcons() {
+      return this.options.filter((e) => typeof e['icon'] !== 'undefined').length > 0;
     },
   },
   methods: {
