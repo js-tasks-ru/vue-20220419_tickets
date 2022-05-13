@@ -18,49 +18,47 @@ export default {
     return {
       toasts: [],
       intervalId: null,
-      delay: 5, // in seconds
+      delay: 5000, // in milliseconds
     };
-  },
-
-  created() {
-    this.intervalId = setInterval(() => {
-      if (this.toasts.length) {
-        this.clearToasts();
-      }
-    }, 1000);
-  },
-
-  beforeUnmount() {
-    clearInterval(this.intervalId);
   },
 
   methods: {
     success(data, delay = this.delay) {
+      let currentTime = new Date().getTime();
       this.toasts.push({
         type: 'toast_success',
         text: data,
-        expire: this.getExpiredDate(delay),
+        time: currentTime,
+        timer: setTimeout(
+          () => {
+            this.deleteToast(currentTime);
+          },
+          delay,
+          currentTime,
+        ),
       });
     },
 
     error(data, delay = this.delay) {
-      this.toasts.push({ type: 'toast_error', text: data, expire: this.getExpiredDate(delay) });
-    },
-
-    getExpiredDate(delay) {
-      let currentDate = new Date();
-      currentDate.setSeconds(currentDate.getSeconds() + delay);
-
-      return currentDate;
-    },
-
-    clearToasts() {
-      let forRemove = this.toasts.filter((e) => e.expire < new Date());
-      forRemove.forEach((f) =>
-        this.toasts.splice(
-          this.toasts.findIndex((e) => e.expire === f.expire),
-          1,
+      let currentTime = new Date().getTime();
+      this.toasts.push({
+        type: 'toast_error',
+        text: data,
+        time: currentTime,
+        timer: setTimeout(
+          () => {
+            this.deleteToast(currentTime);
+          },
+          delay,
+          currentTime,
         ),
+      });
+    },
+
+    deleteToast(time) {
+      this.toasts.splice(
+        this.toasts.findIndex((e) => e.time === time),
+        1,
       );
     },
   },
