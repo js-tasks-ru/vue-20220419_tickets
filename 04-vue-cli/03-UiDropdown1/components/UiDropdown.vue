@@ -62,7 +62,8 @@ export default {
       return this.modelValue ? this.options.find((e) => e.value === this.modelValue).icon : false;
     },
     optionsHasIcons() {
-      return this.options.filter((e) => typeof e['icon'] !== 'undefined').length > 0;
+      // return this.options.filter((e) => typeof e['icon'] !== 'undefined').length > 0;
+      return this.options.some((e) => typeof e['icon'] !== 'undefined');
     },
   },
   methods: {

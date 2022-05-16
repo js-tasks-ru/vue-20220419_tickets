@@ -1,6 +1,6 @@
 <template>
   <div v-if="toasts" class="toasts">
-    <ui-toast v-for="toast in toasts" :key="toast.type + toast.text" :toastClass="toast.type">
+    <ui-toast v-for="toast in toasts" :key="toast.id" :type="toast.type">
       {{ toast.text }}
     </ui-toast>
   </div>
@@ -17,47 +17,40 @@ export default {
   data() {
     return {
       toasts: [],
-      intervalId: null,
+      // intervalId: null,
       delay: 5000, // in milliseconds
+      toastStartId: 0,
     };
   },
 
   methods: {
     success(data, delay = this.delay) {
-      let currentTime = new Date().getTime();
-      this.toasts.push({
-        type: 'toast_success',
-        text: data,
-        time: currentTime,
-        timer: setTimeout(
-          () => {
-            this.deleteToast(currentTime);
-          },
-          delay,
-          currentTime,
-        ),
-      });
+      this.showToast(data, 'success', delay);
     },
 
     error(data, delay = this.delay) {
-      let currentTime = new Date().getTime();
+      this.showToast(data, 'error', delay);
+    },
+
+    showToast(data, type, delay) {
+      let toastId = this.toastStartId++;
       this.toasts.push({
-        type: 'toast_error',
+        type: type,
         text: data,
-        time: currentTime,
+        id: toastId,
         timer: setTimeout(
           () => {
-            this.deleteToast(currentTime);
+            this.deleteToast(toastId);
           },
           delay,
-          currentTime,
+          toastId,
         ),
       });
     },
 
-    deleteToast(time) {
+    deleteToast(id) {
       this.toasts.splice(
-        this.toasts.findIndex((e) => e.time === time),
+        this.toasts.findIndex((e) => e.id === id),
         1,
       );
     },

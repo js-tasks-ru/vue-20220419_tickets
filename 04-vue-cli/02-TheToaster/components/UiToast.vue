@@ -9,8 +9,13 @@
 import UiIcon from './UiIcon';
 
 const icons = {
-  toast_success: 'check-circle',
-  toast_error: 'alert-circle',
+  success: 'check-circle',
+  error: 'alert-circle',
+};
+
+const classes = {
+  success: 'toast_success',
+  error: 'toast_error',
 };
 
 export default {
@@ -19,19 +24,18 @@ export default {
     UiIcon,
   },
   props: {
-    toastClass: {
+    type: {
       type: String,
       default: 'toast_success',
-    },
-    icon: {
-      type: String,
-      default: 'alert-circle',
     },
   },
 
   computed: {
     iconSrc() {
-      return icons[this.toastClass];
+      return icons[this.type];
+    },
+    toastClass() {
+      return classes[this.type];
     },
   },
 };
