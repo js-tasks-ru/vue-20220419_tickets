@@ -1,6 +1,6 @@
 <template>
   <component :is="tag" :type="buttonType" :class="[{ button_block: block }, buttonClass]" class="button"
-    >{{ $attrs }}<slot
+    ><slot
   /></component>
 </template>
 
@@ -31,7 +31,12 @@ export default {
       return classes[this.variant];
     },
     buttonType() {
-      return this.tag === 'button' && !this.$attrs.type ? 'button' : null;
+      // return this.tag === 'button' && !this.$attrs.type ? 'button' : null;
+      if (this.tag === 'button') {
+        return this.$attrs.type ?? 'button';
+      }
+      // Значение undefined позволяет не устанавливать тип
+      return undefined;
     },
   },
 };

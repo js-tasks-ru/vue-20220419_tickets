@@ -4,7 +4,7 @@
     <button type="button" @click="$refs['firstInput'].$refs['input'].focus()">Focus first input 2</button>
 
     <ui-form-group>
-      <ui-input ref="firstInput" v-model="value" />
+      <ui-input ref="firstInput" v-model="value" data-test="555" />
     </ui-form-group>
 
     <ui-form-group label="Small">
