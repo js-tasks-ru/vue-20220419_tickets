@@ -1,5 +1,5 @@
 <template>
-  <component :is="tag" class="link" :to="to"><slot /></component>
+  <component :is="tag" class="link"><slot /></component>
 </template>
 
 <script>
@@ -7,9 +7,6 @@ export default {
   name: 'UiLink',
 
   props: {
-    to: {
-      type: [String, Object],
-    },
     tag: {
       type: [String, Object],
       default: 'router-link',
