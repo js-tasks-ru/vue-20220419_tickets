@@ -17,6 +17,9 @@
     <p>
       <ui-button tag="router-link" to="/">Button RouterLink</ui-button>
     </p>
+    <p>
+      <ui-button tag="div">Button Div</ui-button>
+    </p>
   </div>
 </template>
 
