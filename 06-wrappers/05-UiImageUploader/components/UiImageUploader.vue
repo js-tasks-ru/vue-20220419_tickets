@@ -1,15 +1,59 @@
 <template>
-  <div class="image-uploader">
-    <label class="image-uploader__preview image-uploader__preview-loading" style="--bg-url: url('/link.jpeg')">
-      <span class="image-uploader__text">Загрузить изображение</span>
-      <input type="file" accept="image/*" class="image-uploader__input" />
+  <div class="image-uploader" @click="handleClick()">
+    <label class="image-uploader__preview image-uploader__preview-loading" :style="{ '--bg-url': `url(${preview})` }">
+      <span class="image-uploader__text">{{ title }}</span>
+      <input v-bind="$attrs" type="file" accept="image/*" class="image-uploader__input" />
     </label>
   </div>
 </template>
 
 <script>
+const states = {
+  empty: {
+    title: 'Загрузить изображение',
+  },
+  filled: {
+    title: 'Удалить изображение',
+  },
+  pending: {
+    title: 'Загрузка...',
+  },
+};
+
 export default {
   name: 'UiImageUploader',
+  inheritAttrs: false,
+  props: {
+    preview: String,
+    uploader: Function,
+  },
+  emits: ['remove'],
+  computed: {
+    status() {
+      if (this.preview) {
+        return 'filled';
+      }
+      return 'empty';
+    },
+    bgImage() {
+      return this.preview || undefined;
+    },
+    title() {
+      return states[this.status].title;
+    },
+
+    // clickHandler() {
+    //   if (this.status === 'filled') {
+    //     return this.$attrs.onRemove();
+    //   }
+    //   return undefined;
+    // },
+  },
+  methods: {
+    handleClick() {
+      if (this.status === 'filled') this.$emit('remove');
+    },
+  },
 };
 </script>
 
