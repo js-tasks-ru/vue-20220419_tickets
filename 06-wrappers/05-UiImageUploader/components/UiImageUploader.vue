@@ -1,12 +1,20 @@
 <template>
-  <div class="image-uploader" @click="handleClick()">
+  <div class="image-uploader">
     <label
       class="image-uploader__preview"
       :class="{ 'image-uploader__preview-loading': status === 'pending' }"
       :style="{ '--bg-url': `url(${preview})` }"
     >
       <span class="image-uploader__text">{{ title }}</span>
-      <input v-bind="$attrs" type="file" accept="image/*" class="image-uploader__input" />
+      <input
+        v-bind="$attrs"
+        ref="myFile"
+        type="file"
+        accept="image/*"
+        class="image-uploader__input"
+        @change="handleChange($event)"
+        @click="handleClick($event)"
+      />
     </label>
   </div>
 </template>
@@ -54,9 +62,22 @@ export default {
     // },
   },
   methods: {
-    handleClick() {
-      if (this.status === 'filled') this.$emit('remove');
-      // return this.$emit('upload');
+    handleClick(event) {
+      if (this.status === 'filled') {
+        event.preventDefault();
+        this.$refs.myFile.value = null;
+        this.$emit('remove');
+      }
+      // console.log(event);
+    },
+
+    handleChange(event) {
+      const file = this.$refs.myFile.files[0];
+      this.$emit('upload', { image: URL.createObjectURL(file) });
+      // if (this.status === 'filled') {
+      //   event.preventDefault();
+      // }
+      // console.log(event, this.$refs.myFile.files[0], URL.createObjectURL(file));
     },
   },
 };
