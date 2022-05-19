@@ -1,6 +1,10 @@
 <template>
   <div class="image-uploader" @click="handleClick()">
-    <label class="image-uploader__preview image-uploader__preview-loading" :style="{ '--bg-url': `url(${preview})` }">
+    <label
+      class="image-uploader__preview"
+      :class="{ 'image-uploader__preview-loading': status === 'pending' }"
+      :style="{ '--bg-url': `url(${preview})` }"
+    >
       <span class="image-uploader__text">{{ title }}</span>
       <input v-bind="$attrs" type="file" accept="image/*" class="image-uploader__input" />
     </label>
@@ -27,7 +31,7 @@ export default {
     preview: String,
     uploader: Function,
   },
-  emits: ['remove'],
+  emits: ['remove', 'upload'],
   computed: {
     status() {
       if (this.preview) {
@@ -52,6 +56,7 @@ export default {
   methods: {
     handleClick() {
       if (this.status === 'filled') this.$emit('remove');
+      // return this.$emit('upload');
     },
   },
 };
