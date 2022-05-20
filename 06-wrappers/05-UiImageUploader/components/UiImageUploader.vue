@@ -39,12 +39,21 @@ export default {
     preview: String,
     uploader: Function,
   },
-  emits: ['remove', 'upload'],
+  emits: ['remove', 'upload', 'error', 'select'],
+  data() {
+    return {
+      loading: false,
+    };
+  },
   computed: {
     status() {
       if (this.preview) {
         return 'filled';
       }
+      if (this.loading) {
+        return 'pending';
+      }
+
       return 'empty';
     },
     bgImage() {
@@ -65,19 +74,36 @@ export default {
     handleClick(event) {
       if (this.status === 'filled') {
         event.preventDefault();
-        this.$refs.myFile.value = null;
+        this.resetInput();
         this.$emit('remove');
       }
       // console.log(event);
     },
 
     handleChange(event) {
-      const file = this.$refs.myFile.files[0];
-      this.$emit('upload', { image: URL.createObjectURL(file) });
-      // if (this.status === 'filled') {
-      //   event.preventDefault();
-      // }
+      // const file = this.$refs.myFile.files[0];
+      const file = event.target.files[0];
+      this.$emit('select', file);
+      if (this.uploader) {
+        this.loading = true;
+        this.uploader(file)
+          .then(
+            (result) => {
+              this.$emit('upload', result);
+            },
+            (error) => {
+              this.resetInput();
+              this.$emit('error', error);
+            },
+          )
+          .then(() => (this.loading = false));
+      } else {
+        this.$emit('upload', { image: URL.createObjectURL(file) });
+      }
       // console.log(event, this.$refs.myFile.files[0], URL.createObjectURL(file));
+    },
+    resetInput() {
+      this.$refs.myFile.value = null;
     },
   },
 };
