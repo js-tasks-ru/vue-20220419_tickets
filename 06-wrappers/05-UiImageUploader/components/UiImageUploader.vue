@@ -96,7 +96,7 @@ export default {
               this.$emit('error', error);
             },
           )
-          .then(() => (this.loading = false));
+          .finally(() => (this.loading = false));
       } else {
         this.$emit('upload', { image: URL.createObjectURL(file) });
       }
