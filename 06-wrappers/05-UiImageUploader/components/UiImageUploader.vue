@@ -2,39 +2,34 @@
   <div class="image-uploader">
     <label
       class="image-uploader__preview"
-      :class="{ 'image-uploader__preview-loading': status === 'pending' }"
-      :style="{ '--bg-url': `url(${preview})` }"
+      :class="{ 'image-uploader__preview-loading': state === $options.States.LOADING }"
+      :style="previewSrc && `--bg-url: url('${previewSrc}')`"
     >
-      <span class="image-uploader__text">{{ title }}</span>
+      <span class="image-uploader__text">{{ stateText }}</span>
       <input
         v-bind="$attrs"
-        ref="myFile"
+        ref="input"
         type="file"
         accept="image/*"
         class="image-uploader__input"
-        @change="handleChange($event)"
-        @click="handleClick($event)"
+        @change="handleFileSelect"
+        @click="handleClick"
       />
     </label>
   </div>
 </template>
 
 <script>
-const states = {
-  empty: {
-    title: 'Загрузить изображение',
-  },
-  filled: {
-    title: 'Удалить изображение',
-  },
-  pending: {
-    title: 'Загрузка...',
-  },
+const States = {
+  EMPTY: 'empty',
+  LOADING: 'loading',
+  FILLED: 'filled',
 };
 
 export default {
   name: 'UiImageUploader',
   inheritAttrs: false,
+  States,
   props: {
     preview: String,
     uploader: Function,
@@ -42,68 +37,63 @@ export default {
   emits: ['remove', 'upload', 'error', 'select'],
   data() {
     return {
-      loading: false,
+      state: this.preview ? States.FILLED : States.EMPTY,
+      selectedImage: null,
     };
   },
   computed: {
-    status() {
-      if (this.preview) {
-        return 'filled';
-      }
-      if (this.loading) {
-        return 'pending';
-      }
-
-      return 'empty';
-    },
-    bgImage() {
-      return this.preview || undefined;
-    },
-    title() {
-      return states[this.status].title;
+    previewSrc() {
+      return this.selectedImage ?? this.preview;
     },
 
-    // clickHandler() {
-    //   if (this.status === 'filled') {
-    //     return this.$attrs.onRemove();
-    //   }
-    //   return undefined;
-    // },
+    stateText() {
+      return {
+        [States.EMPTY]: 'Загрузить изображение',
+        [States.LOADING]: 'Загрузка...',
+        [States.FILLED]: 'Удалить изображение',
+      }[this.state];
+    },
   },
   methods: {
-    handleClick(event) {
-      if (this.status === 'filled') {
-        event.preventDefault();
-        this.resetInput();
-        this.$emit('remove');
+    handleFileSelect($event) {
+      const file = $event.target.files[0];
+      // Выводим текущий файл через URL.createObjectURL
+      this.selectedImage = URL.createObjectURL(file);
+      this.$emit('select', file);
+      // Если загрузчика нет - сразу считаем файл выбранным
+      if (!this.uploader) {
+        this.state = States.FILLED;
+        return;
       }
-      // console.log(event);
+      this.state = States.LOADING;
+      return this.uploader(file)
+        .then((result) => {
+          this.state = States.FILLED;
+          this.$emit('upload', result);
+        })
+        .catch((error) => {
+          this.state = States.EMPTY;
+          this.removeFile();
+          this.$emit('error', error);
+        })
+        .finally(() => {
+          this.selectedImage = null;
+        });
     },
 
-    handleChange(event) {
-      // const file = this.$refs.myFile.files[0];
-      const file = event.target.files[0];
-      this.$emit('select', file);
-      if (this.uploader) {
-        this.loading = true;
-        this.uploader(file)
-          .then(
-            (result) => {
-              this.$emit('upload', result);
-            },
-            (error) => {
-              this.resetInput();
-              this.$emit('error', error);
-            },
-          )
-          .finally(() => (this.loading = false));
-      } else {
-        this.$emit('upload', { image: URL.createObjectURL(file) });
+    handleClick($event) {
+      if (this.state === States.LOADING) {
+        $event.preventDefault();
+      } else if (this.state === States.FILLED) {
+        $event.preventDefault();
+        this.removeFile();
+        this.state = States.EMPTY;
+        this.$emit('remove');
       }
-      // console.log(event, this.$refs.myFile.files[0], URL.createObjectURL(file));
+      // Когда ничего не выбрано, клик обрабатывается по умолчанию, открывая диалог выбора файла
     },
-    resetInput() {
-      this.$refs.myFile.value = null;
+    removeFile() {
+      this.$refs.input.value = '';
     },
   },
 };
