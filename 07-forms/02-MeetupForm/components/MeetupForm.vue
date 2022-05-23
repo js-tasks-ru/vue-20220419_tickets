@@ -21,15 +21,14 @@
           -->
           <ui-image-uploader
             name="image"
-            :preview="meetup.image"
-            @select="meetup.imageToUpload = $event"
-            @remove="meetup.imageToUpload = null"
+            :preview="localMeetup.image"
+            @select="localMeetup.imageToUpload = $event"
+            @remove="localMeetup.imageToUpload = null"
           />
         </ui-form-group>
       </fieldset>
 
       <h3 class="meetup-form__agenda-title">Программа</h3>
-
       <meetup-agenda-item-form
         v-for="(agendaItem, index) in localMeetup.agenda"
         :key="agendaItem.id"
@@ -119,7 +118,7 @@ export default {
       this.localMeetup.agenda.splice(index, 1);
     },
     handleSubmit() {
-      this.$emit('submit', this.localMeetup);
+      this.$emit('submit', cloneDeep(this.localMeetup));
     },
   },
 };
