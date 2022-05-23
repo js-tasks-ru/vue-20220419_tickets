@@ -7,11 +7,11 @@
     >
       <span class="image-uploader__text">{{ stateText }}</span>
       <input
+        v-bind="$attrs"
         ref="input"
         type="file"
         accept="image/*"
         class="image-uploader__input"
-        v-bind="$attrs"
         @change="handleFileSelect"
         @click="handleClick"
       />
@@ -29,36 +29,23 @@ const States = {
 export default {
   name: 'UiImageUploader',
   inheritAttrs: false,
-
   States,
-
   props: {
-    uploader: {
-      type: Function,
-    },
-
-    preview: {
-      type: String,
-    },
+    preview: String,
+    uploader: Function,
   },
-
-  emits: ['upload', 'select', 'error', 'remove'],
-
+  emits: ['remove', 'upload', 'error', 'select'],
   data() {
     return {
-      // Храним текущее состояние
-      // Начальное состояние зависит от того, передан ли preview
       state: this.preview ? States.FILLED : States.EMPTY,
       selectedImage: null,
     };
   },
-
   computed: {
     previewSrc() {
       return this.selectedImage ?? this.preview;
     },
 
-    // Текст от текущего состояния
     stateText() {
       return {
         [States.EMPTY]: 'Загрузить изображение',
@@ -67,22 +54,18 @@ export default {
       }[this.state];
     },
   },
-
   methods: {
     handleFileSelect($event) {
       const file = $event.target.files[0];
       // Выводим текущий файл через URL.createObjectURL
       this.selectedImage = URL.createObjectURL(file);
       this.$emit('select', file);
-
       // Если загрузчика нет - сразу считаем файл выбранным
       if (!this.uploader) {
         this.state = States.FILLED;
         return;
       }
-
       this.state = States.LOADING;
-
       return this.uploader(file)
         .then((result) => {
           this.state = States.FILLED;
@@ -90,8 +73,6 @@ export default {
         })
         .catch((error) => {
           this.state = States.EMPTY;
-          // Не забываем сбросить файл в случае не успешной загрузки
-          // Иначе нельзя будет выбрать тот же файл
           this.removeFile();
           this.$emit('error', error);
         })
@@ -102,7 +83,6 @@ export default {
 
     handleClick($event) {
       if (this.state === States.LOADING) {
-        // Игнорируем клик во время загрузки
         $event.preventDefault();
       } else if (this.state === States.FILLED) {
         $event.preventDefault();
@@ -112,7 +92,6 @@ export default {
       }
       // Когда ничего не выбрано, клик обрабатывается по умолчанию, открывая диалог выбора файла
     },
-
     removeFile() {
       this.$refs.input.value = '';
     },
