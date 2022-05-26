@@ -96,7 +96,7 @@ export default {
       required: true,
     },
   },
-  emits: ['remove', 'update:AgendaItem'],
+  emits: ['remove', 'update:agendaItem'],
   data() {
     return {
       localAgendaItem: { ...this.agendaItem },
@@ -118,7 +118,7 @@ export default {
     localAgendaItem: {
       deep: true,
       handler() {
-        this.$emit('update:AgendaItem', { ...this.localAgendaItem });
+        this.$emit('update:agendaItem', { ...this.localAgendaItem });
       },
     },
   },
