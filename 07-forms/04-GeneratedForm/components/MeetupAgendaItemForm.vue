@@ -1,32 +1,40 @@
 <template>
   <fieldset class="agenda-item-form">
-    <button type="button" class="agenda-item-form__remove-button">
+    <button type="button" class="agenda-item-form__remove-button" @click="$emit('remove')">
       <ui-icon icon="trash" />
     </button>
 
     <ui-form-group>
-      <ui-dropdown title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
+      <ui-dropdown v-model="localAgendaItem.type" title="Тип" :options="$options.agendaItemTypeOptions" name="type" />
     </ui-form-group>
 
     <div class="agenda-item-form__row">
       <div class="agenda-item-form__col">
         <ui-form-group label="Начало">
-          <ui-input type="time" placeholder="00:00" name="startsAt" />
+          <ui-input v-model="localAgendaItem.startsAt" type="time" placeholder="00:00" name="startsAt" />
         </ui-form-group>
       </div>
       <div class="agenda-item-form__col">
         <ui-form-group label="Окончание">
-          <ui-input type="time" placeholder="00:00" name="endsAt" />
+          <ui-input v-model="localAgendaItem.endsAt" type="time" placeholder="00:00" name="endsAt" />
         </ui-form-group>
       </div>
     </div>
+    <!-- {{ $options.agendaItemFormSchemas[localAgendaItem.type] }} -->
 
-    <ui-form-group label="Заголовок">
+    <template v-for="(field, key) in $options.agendaItemFormSchemas[localAgendaItem.type]" :key="key">
+      <!-- {{ key }}  -->
+      {{ `localAgendaItem.${key}` }}
+      <ui-form-group :label="field.label">
+        <component :is="field.component" name="key" v-bind="field.props" v-model="localAgendaItem[key]"></component>
+      </ui-form-group>
+    </template>
+    <!-- <ui-form-group label="Заголовок">
       <ui-input name="title" />
     </ui-form-group>
     <ui-form-group label="Описание">
       <ui-input multiline name="description" />
-    </ui-form-group>
+    </ui-form-group> -->
   </fieldset>
 </template>
 
@@ -164,6 +172,11 @@ export default {
       type: Object,
       required: true,
     },
+  },
+  data() {
+    return {
+      localAgendaItem: { ...this.agendaItem },
+    };
   },
 };
 </script>
