@@ -20,21 +20,12 @@
         </ui-form-group>
       </div>
     </div>
-    <!-- {{ $options.agendaItemFormSchemas[localAgendaItem.type] }} -->
-
     <template v-for="(field, key) in $options.agendaItemFormSchemas[localAgendaItem.type]" :key="key">
-      <!-- {{ key }}  -->
       {{ `localAgendaItem.${key}` }}
       <ui-form-group :label="field.label">
         <component :is="field.component" name="key" v-bind="field.props" v-model="localAgendaItem[key]"></component>
       </ui-form-group>
     </template>
-    <!-- <ui-form-group label="Заголовок">
-      <ui-input name="title" />
-    </ui-form-group>
-    <ui-form-group label="Описание">
-      <ui-input multiline name="description" />
-    </ui-form-group> -->
   </fieldset>
 </template>
 
