@@ -121,8 +121,27 @@ export default {
         this.$emit('update:agendaItem', { ...this.localAgendaItem });
       },
     },
+    'localAgendaItem.startsAt'(newValue, oldValue) {
+      this.getNewEndTime(newValue, oldValue);
+    },
   },
-  methods: {},
+  methods: {
+    getDate(string) {
+      return new Date(0, 0, 0, string.split(':')[0], string.split(':')[1]);
+    },
+    getNewEndTime(newValue, oldValue) {
+      const different = this.getDate(newValue) - this.getDate(oldValue);
+      const hoursDiff = new Date(different).getUTCHours();
+      const minutesDiff = new Date(different).getUTCMinutes();
+      const endTime = this.getDate(this.localAgendaItem.endsAt);
+
+      const nextHour = endTime.getHours() + hoursDiff;
+      const nextMinute = endTime.getMinutes() + minutesDiff;
+      endTime.setHours(nextHour);
+      endTime.setMinutes(nextMinute);
+      this.localAgendaItem.endsAt = endTime.toString().substring(16, 21);
+    },
+  },
 };
 </script>
 
